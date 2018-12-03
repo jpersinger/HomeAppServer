@@ -1,7 +1,3 @@
-// const BlueBirdPromise = require("bluebird");
-// const redis = require("redis");
-// const url = require("url");
-
 import BlueBirdPromise from "bluebird";
 import redis, { ClientOpts } from "redis";
 import url from "url";
