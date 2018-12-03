@@ -3,7 +3,7 @@ const app = express();
 
 const port = process.env.PORT || 3001;
 
-console.log(port, process.env);
+console.log(process.env.REDISTOGO_URL, process.env);
 
 app.get("/recipes", (req, res) => {
   res.json({ recipes: "recipe" });
