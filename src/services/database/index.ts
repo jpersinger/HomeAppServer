@@ -1,15 +1,14 @@
-import redis, { ClientOpts } from "redis";
-import url from "url";
-import { RECIPES } from "./constants";
+const redis = require("redis");
+const url = require("url");
+const { RECIPES } = require("./constants");
 
-const getClient = (): redis.RedisClient => {
-  if (process.env.REDISTOGO_URL) {
-    const rtg = url.parse(process.env.REDISTOGO_URL);
-    console.log("rtg", rtg, rtg.hostname as ClientOpts);
-    const client = redis.createClient(
-      rtg.port || "",
-      rtg.hostname as ClientOpts
-    );
+const getClient = () => {
+  const temp =
+    "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/";
+  if (temp) {
+    const rtg = url.parse(temp);
+    console.log("rtg", rtg, rtg.hostname);
+    const client = redis.createClient(rtg.port || "", rtg.hostname);
     console.log("client", client);
 
     const auth = rtg.auth || "";
@@ -30,8 +29,10 @@ const getClient = (): redis.RedisClient => {
   // }, 60000);
 };
 
-export const getRecipes = (): any => {
+module.exports.getRecipes = (): any => {
   const client = getClient();
+  client.set(RECIPES, "hi", redis.print);
+  console.log("size", client.dbsize());
   return client.get(RECIPES);
 };
 
