@@ -28,6 +28,7 @@ module.exports.getRecipes = (): any => {
   const client = getClient();
   client.set(RECIPES, "hi", redis.print);
   console.log("size", client.dbsize());
+  console.log("recipes", client.get(RECIPES));
   return client.get(RECIPES);
 };
 

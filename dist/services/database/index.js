@@ -3,22 +3,18 @@ var redis = require("redis");
 var url = require("url");
 var RECIPES = require("./constants").RECIPES;
 var getClient = function () {
-    var temp = "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/";
-    if (temp) {
-        var rtg = url.parse(temp);
-        console.log("rtg", rtg, rtg.hostname);
+    if (process.env.REDISTOGO_URL) {
+        var rtg = url.parse(process.env.REDISTOGO_URL);
         var client = redis.createClient(rtg.port || "", rtg.hostname);
-        console.log("client", client);
         var auth = rtg.auth || "";
-        console.log("auth", auth);
+        console.log(client.auth);
         client.auth(auth.split(":")[1]);
-        console.log("client again", client);
+        console.log(client.auth);
         return client;
     }
     else {
         console.log("creating new client");
         var client = redis.createClient();
-        console.log("new client", client);
         return client;
     }
     // setInterval(() => {
@@ -30,6 +26,7 @@ module.exports.getRecipes = function () {
     var client = getClient();
     client.set(RECIPES, "hi", redis.print);
     console.log("size", client.dbsize());
+    console.log("recipes", client.get(RECIPES));
     return client.get(RECIPES);
 };
 // const sendLocalData = () => {
