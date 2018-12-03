@@ -1,48 +1,72 @@
-const redis = require("redis");
-const url = require("url");
-const { RECIPES } = require("./constants");
-const BlueBirdPromise = require("bluebird");
+// const BlueBirdPromise = require("bluebird");
+// const redis = require("redis");
+// const url = require("url");
 
-const getClient = () => {
-  const temp =
-    "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/";
-  // if (process.env.REDISTOGO_URL) {
-  if (temp) {
-    const rtg = url.parse(temp);
-    const client = redis.createClient(rtg.port || "", rtg.hostname);
+import BlueBirdPromise from "bluebird";
+import redis, { ClientOpts } from "redis";
+import url from "url";
 
-    const auth = rtg.auth || "";
-    client.auth(auth.split(":")[1]);
-    return client;
-  } else {
-    console.log("creating new client");
-    const client = redis.createClient();
-    return client;
+class DatabaseHandler {
+  client;
+
+  constructor() {
+    this.client = this.getClient();
   }
-};
 
-module.exports.getRecipes = (): Promise<string> =>
-  new BlueBirdPromise((resolve, reject) => {
-    getClient().get(RECIPES, (err, data) => {
-      if (!!err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
+  getClient() {
+    if (process.env.REDISTOGO_URL) {
+      const rtg = url.parse(process.env.REDISTOGO_URL);
+      const client = redis.createClient(
+        rtg.port || "",
+        rtg.hostname as ClientOpts
+      );
+
+      const auth = rtg.auth || "";
+      client.auth(auth.split(":")[1]);
+      return client;
+    } else {
+      const client = redis.createClient();
+      return client;
+    }
+  }
+
+  setValue(key: string, field: string, value: any) {
+    this.client.hset(key, field, value);
+  }
+
+  getValuesFromHashKey = (
+    key: string,
+    field: string,
+    cleanData: (data: any) => any
+  ) => {
+    return new BlueBirdPromise((resolve, reject) => {
+      this.client.hget(key, field, (err, data) => {
+        if (!!err) {
+          reject(err);
+        } else {
+          resolve(cleanData(data));
+        }
+      });
     });
-  });
+  };
 
-// const sendLocalData = () => {
-//   console.log("sending");
-//   client.hset(RECIPES, "oatmeal", "piece 1", redis.print);
-// };
+  getValues = (
+    key: string,
+    cleanData: (data: any) => any
+  ): BlueBirdPromise<any[]> =>
+    new BlueBirdPromise((resolve, reject) =>
+      this.client.hkeys(key, (err, replies) => {
+        const hashValues = replies.map(reply =>
+          this.getValuesFromHashKey(key, reply, cleanData)
+        );
+        BlueBirdPromise.all(hashValues).then(values => {
+          resolve(values);
+        });
+      })
+    );
+}
 
-// const pullServerData = () => {
-//   console.log("pulling");
-//   client.hkeys(RECIPES, (err, replies) => {
-//     console.log(replies.length, " replies:");
-//     replies.forEach((reply, i) => {
-//       console.log("        ", i, ": ", reply);
-//     });
-//   });
-// };
+const instance = new DatabaseHandler();
+Object.freeze(instance);
+
+export default instance;
