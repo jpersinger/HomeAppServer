@@ -5,4 +5,4 @@ app.get("/recipes", (req, res) => {
   res.json({ recipes: "recipe" });
 });
 
-app.listen(3001);
+app.listen();
