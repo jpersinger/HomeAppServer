@@ -1,34 +1,34 @@
 "use strict";
-var redis = require("redis");
-var url = require("url");
-var RECIPES = require("./constants").RECIPES;
-var getClient = function () {
-    if (process.env.REDISTOGO_URL) {
-        var rtg = url.parse(process.env.REDISTOGO_URL);
-        var client = redis.createClient(rtg.port || "", rtg.hostname);
-        var auth = rtg.auth || "";
-        console.log(client.auth);
+const redis = require("redis");
+const url = require("url");
+const { RECIPES } = require("./constants");
+const BlueBirdPromise = require("bluebird");
+const getClient = () => {
+    const temp = "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/";
+    // if (process.env.REDISTOGO_URL) {
+    if (temp) {
+        const rtg = url.parse(temp);
+        const client = redis.createClient(rtg.port || "", rtg.hostname);
+        const auth = rtg.auth || "";
         client.auth(auth.split(":")[1]);
-        console.log(client.auth);
         return client;
     }
     else {
         console.log("creating new client");
-        var client = redis.createClient();
+        const client = redis.createClient();
         return client;
     }
-    // setInterval(() => {
-    //   sendLocalData();
-    //   pullServerData();
-    // }, 60000);
 };
-module.exports.getRecipes = function () {
-    var client = getClient();
-    client.set(RECIPES, "hi", redis.print);
-    console.log("size", client.dbsize());
-    console.log("recipes", client.get(RECIPES));
-    return client.get(RECIPES);
-};
+module.exports.getRecipes = () => new BlueBirdPromise((resolve, reject) => {
+    getClient().get(RECIPES, (err, data) => {
+        if (!!err) {
+            reject(err);
+        }
+        else {
+            resolve(data);
+        }
+    });
+});
 // const sendLocalData = () => {
 //   console.log("sending");
 //   client.hset(RECIPES, "oatmeal", "piece 1", redis.print);
