@@ -1,6 +1,6 @@
 import redis, { ClientOpts } from "redis";
 import url from "url";
-import { RECIPE_NAMES } from "./constants";
+import { RECIPES } from "./constants";
 
 let client: redis.RedisClient;
 
@@ -21,20 +21,24 @@ export const setup = () => {
     console.log("new client", client);
   }
 
-  setInterval(() => {
-    sendLocalData();
-    pullServerData();
-  }, 60000);
+  // setInterval(() => {
+  //   sendLocalData();
+  //   pullServerData();
+  // }, 60000);
+};
+
+export const getRecipes = (): any => {
+  return client.get(RECIPES);
 };
 
 const sendLocalData = () => {
   console.log("sending");
-  client.hset(RECIPE_NAMES, "oatmeal", "piece 1", redis.print);
+  client.hset(RECIPES, "oatmeal", "piece 1", redis.print);
 };
 
 const pullServerData = () => {
   console.log("pulling");
-  client.hkeys(RECIPE_NAMES, (err, replies) => {
+  client.hkeys(RECIPES, (err, replies) => {
     console.log(replies.length, " replies:");
     replies.forEach((reply, i) => {
       console.log("        ", i, ": ", reply);
