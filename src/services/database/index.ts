@@ -3,10 +3,8 @@ const url = require("url");
 const { RECIPES } = require("./constants");
 
 const getClient = () => {
-  const temp =
-    "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/";
-  if (temp) {
-    const rtg = url.parse(temp);
+  if (process.env.REDISTOGO_URL) {
+    const rtg = url.parse(process.env.REDISTOGO_URL);
     console.log("rtg", rtg, rtg.hostname);
     const client = redis.createClient(rtg.port || "", rtg.hostname);
     console.log("client", client);
