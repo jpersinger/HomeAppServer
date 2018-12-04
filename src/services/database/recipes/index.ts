@@ -57,10 +57,10 @@ const cleanRecipeData = (recipeData: any): any => {
 };
 
 exportReturns.addRecipe = (recipe: Recipe) => {
-  DatabaseHandler.setValue(RECIPES, recipe.title, JSON.stringify(recipe));
+  DatabaseHandler.setHashValue(RECIPES, recipe.title, JSON.stringify(recipe));
 };
 
 exportReturns.getRecipes = (): BlueBirdPromise<any[]> =>
-  DatabaseHandler.getValues(RECIPES, cleanRecipeData);
+  DatabaseHandler.getHashValues(RECIPES);
 
 module.exports = exportReturns;

@@ -3,7 +3,7 @@ import redis, { ClientOpts } from "redis";
 import url from "url";
 
 class DatabaseHandler {
-  client;
+  client: redis.RedisClient;
 
   constructor() {
     this.client = this.getClient();
@@ -26,34 +26,31 @@ class DatabaseHandler {
     }
   }
 
-  setValue(key: string, field: string, value: any) {
+  setHashValue(key: string, field: string, value: any) {
     this.client.hset(key, field, value);
   }
 
-  getValuesFromHashKey = (
-    key: string,
-    field: string,
-    cleanData: (data: any) => any
-  ) => {
+  deleteValue(key: string, field: string) {
+    this.client.hdel(key, field);
+  }
+
+  getValuesFromHashKey = (key: string, field: string) => {
     return new BlueBirdPromise((resolve, reject) => {
       this.client.hget(key, field, (err, data) => {
         if (!!err) {
           reject(err);
         } else {
-          resolve(cleanData(data));
+          resolve(JSON.parse(data));
         }
       });
     });
   };
 
-  getValues = (
-    key: string,
-    cleanData: (data: any) => any
-  ): BlueBirdPromise<any[]> =>
+  getHashValues = (key: string): BlueBirdPromise<any[]> =>
     new BlueBirdPromise((resolve, reject) =>
       this.client.hkeys(key, (err, replies) => {
         const hashValues = replies.map(reply =>
-          this.getValuesFromHashKey(key, reply, cleanData)
+          this.getValuesFromHashKey(key, reply)
         );
         BlueBirdPromise.all(hashValues).then(values => {
           resolve(values);
