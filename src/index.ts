@@ -27,7 +27,10 @@ const port = process.env.PORT || 3001;
 
 app.all("*", (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Origin, X-Auth-Token"
+  );
   res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
 
   // updatePiggyBanks();
