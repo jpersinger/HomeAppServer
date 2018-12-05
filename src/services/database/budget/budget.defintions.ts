@@ -1,3 +1,13 @@
+export interface GeneralBudget {
+  bankAmount: number;
+  lastUpdatedBankAmount: string;
+}
+
+export interface CreditCardDebt {
+  amount: number;
+  lastUpdated: string;
+}
+
 export interface MonthlyExpense {
   title: string;
   cost: number;

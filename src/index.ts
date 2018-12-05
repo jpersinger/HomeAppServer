@@ -2,6 +2,10 @@
 import bodyParser from "body-parser";
 import express from "express";
 import {
+  GENERAL_BUDGET_BRYAN_CREDIT_URL,
+  GENERAL_BUDGET_JULIE_CREDIT_URL,
+  GENERAL_BUDGET_POST_URL,
+  GENERAL_BUDGET_URL,
   INCOME_URL,
   MONTHLY_EXPENSES_URL,
   PIGGY_BANKS_URL,
@@ -14,9 +18,12 @@ import {
   deleteIncome,
   deleteMonthlyExpense,
   deletePiggyBank,
+  getGeneralBudget,
   getIncomes,
   getMonthlyExpenses,
-  getPiggyBanks
+  getPiggyBanks,
+  updateCreditCard,
+  updateGeneralBudget
 } from "./services/database/budget";
 const { getRecipes, addRecipe } = require("./services/database/recipes");
 const app = express();
@@ -54,6 +61,29 @@ app.get(RECIPE_HASH, (req, res) => {
 });
 
 // BUDGET
+
+// GENERAL INFO
+app.post(GENERAL_BUDGET_POST_URL, (req, res) => {
+  updateGeneralBudget(req.body.amount);
+});
+
+app.post(GENERAL_BUDGET_JULIE_CREDIT_URL, (req, res) => {
+  updateCreditCard("Julie", req.body.amount);
+});
+
+app.post(GENERAL_BUDGET_BRYAN_CREDIT_URL, (req, res) => {
+  updateCreditCard("Bryan", req.body.amount);
+});
+
+app.get(GENERAL_BUDGET_URL, (req, res) => {
+  getGeneralBudget()
+    .then(budget => {
+      res.send(budget);
+    })
+    .catch(err => {
+      res.send(err);
+    });
+});
 
 // MONTHLY EXPENSES
 app.post(MONTHLY_EXPENSES_URL, (req, res) => {
