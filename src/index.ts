@@ -1,4 +1,4 @@
-// const express = require("express");
+import BlueBirdPromise from "bluebird";
 import bodyParser from "body-parser";
 import express from "express";
 import {
@@ -7,6 +7,7 @@ import {
   GENERAL_BUDGET_POST_URL,
   GENERAL_BUDGET_URL,
   INCOME_URL,
+  MESSAGES_URL,
   MONTHLY_EXPENSES_URL,
   PIGGY_BANKS_URL,
   RECIPE_HASH
@@ -25,6 +26,7 @@ import {
   updateCreditCard,
   updateGeneralBudget
 } from "./services/database/budget";
+import { addMessage, getMessages } from "./services/database/home";
 const { getRecipes, addRecipe } = require("./services/database/recipes");
 const app = express();
 
@@ -45,19 +47,32 @@ app.all("*", (req, res, next) => {
   next();
 });
 
+const sendData = (res, getData: () => BlueBirdPromise<any[]>) => {
+  getData()
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.send({ err });
+    });
+};
+
+// HOME
+app.post(MESSAGES_URL, (req, res) => {
+  addMessage(req.body);
+});
+
+app.get(MESSAGES_URL, (req, res) => {
+  sendData(res, getMessages);
+});
+
 // RECIPES
 app.post(RECIPE_HASH, (req, res) => {
   addRecipe(req.body);
 });
 
 app.get(RECIPE_HASH, (req, res) => {
-  getRecipes()
-    .then(recipes => {
-      res.send({ recipes });
-    })
-    .catch(err => {
-      res.send({ err });
-    });
+  sendData(res, getRecipes);
 });
 
 // BUDGET
@@ -76,13 +91,7 @@ app.post(GENERAL_BUDGET_BRYAN_CREDIT_URL, (req, res) => {
 });
 
 app.get(GENERAL_BUDGET_URL, (req, res) => {
-  getGeneralBudget()
-    .then(budget => {
-      res.send(budget);
-    })
-    .catch(err => {
-      res.send(err);
-    });
+  sendData(res, getGeneralBudget);
 });
 
 // MONTHLY EXPENSES
@@ -95,13 +104,7 @@ app.delete(MONTHLY_EXPENSES_URL, (req, res) => {
 });
 
 app.get(MONTHLY_EXPENSES_URL, (req, res) => {
-  getMonthlyExpenses()
-    .then(monthlyExpenses => {
-      res.send(monthlyExpenses);
-    })
-    .catch(err => {
-      res.send({ err });
-    });
+  sendData(res, getMonthlyExpenses);
 });
 
 // PIGGY BANKS
@@ -114,13 +117,7 @@ app.delete(PIGGY_BANKS_URL, (req, res) => {
 });
 
 app.get(PIGGY_BANKS_URL, (req, res) => {
-  getPiggyBanks()
-    .then(piggyBanks => {
-      res.send(piggyBanks);
-    })
-    .catch(err => {
-      res.send({ err });
-    });
+  sendData(res, getPiggyBanks);
 });
 
 // INCOMES
@@ -133,13 +130,7 @@ app.delete(INCOME_URL, (req, res) => {
 });
 
 app.get(INCOME_URL, (req, res) => {
-  getIncomes()
-    .then(incomes => {
-      res.send(incomes);
-    })
-    .catch(err => {
-      res.send({ err });
-    });
+  sendData(res, getIncomes);
 });
 
 app.listen(port);

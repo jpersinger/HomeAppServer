@@ -52,10 +52,6 @@ const exportReturns: ExportReturns = {
   getRecipes: () => {}
 };
 
-const cleanRecipeData = (recipeData: any): any => {
-  return JSON.parse(recipeData);
-};
-
 exportReturns.addRecipe = (recipe: Recipe) => {
   DatabaseHandler.setHashValue(RECIPES, recipe.title, JSON.stringify(recipe));
 };
