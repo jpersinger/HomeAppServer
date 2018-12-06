@@ -133,4 +133,8 @@ app.get(INCOME_URL, (req, res) => {
   sendData(res, getIncomes);
 });
 
+app.get("/test", (req, res) => {
+  res.send(process.env.GOOGLE_CLIENT_ID);
+});
+
 app.listen(port);

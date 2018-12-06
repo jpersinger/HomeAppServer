@@ -10,11 +10,8 @@ class DatabaseHandler {
   }
 
   getClient() {
-    // if (process.env.REDISTOGO_URL) {
-    if (true) {
-      const rtg = url.parse(
-        "redis://redistogo:7e4530aa737cc1bbb5fbbc11d69c82cf@barb.redistogo.com:9990/"
-      );
+    if (process.env.REDISTOGO_URL) {
+      const rtg = url.parse(process.env.REDISTOGO_URL);
       const client = redis.createClient(
         rtg.port || "",
         rtg.hostname as ClientOpts
