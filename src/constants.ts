@@ -6,6 +6,7 @@ export const GENERAL_BUDGET_HASH = "/general";
 export const MONTHLY_EXPENSES_HASH = "/monthlyexpenses";
 export const PIGGY_BANKS_HASH = "/piggybanks";
 export const INCOME_HASH = "/incomes";
+export const SETTINGS_HASH = "/settings";
 
 export const MESSAGES_URL = HOME_HASH + MESSAGES_HASH;
 

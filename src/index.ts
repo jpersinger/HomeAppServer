@@ -10,7 +10,8 @@ import {
   MESSAGES_URL,
   MONTHLY_EXPENSES_URL,
   PIGGY_BANKS_URL,
-  RECIPE_HASH
+  RECIPE_HASH,
+  SETTINGS_HASH
 } from "./constants";
 import {
   addIncome,
@@ -27,6 +28,11 @@ import {
   updateGeneralBudget
 } from "./services/database/budget";
 import { addMessage, getMessages } from "./services/database/home";
+import {
+  addNewUser,
+  getUserDataByEmail,
+  getUserDataById
+} from "./services/database/settings";
 const { getRecipes, addRecipe } = require("./services/database/recipes");
 const app = express();
 
@@ -135,6 +141,29 @@ app.get(INCOME_URL, (req, res) => {
 
 app.get("/test", (req, res) => {
   res.send(process.env.GOOGLE_CLIENT_ID);
+});
+
+// SETTINGS
+app.post(SETTINGS_HASH, (req, res) => {
+  addNewUser(req.body);
+});
+
+app.get(SETTINGS_HASH, (req, res) => {
+  const { id, email } = JSON.parse(req.query.user);
+  console.log("req", id, email);
+  if (!id && !email) {
+    res.send({});
+    return;
+  }
+
+  const prom = !!id ? getUserDataById(id) : getUserDataByEmail(email);
+  prom
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.send({ err });
+    });
 });
 
 app.listen(port);
