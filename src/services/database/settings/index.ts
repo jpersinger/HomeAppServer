@@ -11,7 +11,7 @@ export const addNewUser = (user: UserData) => {
 export const getUserDataById = (id: string): BlueBirdPromise<any[]> =>
   new BlueBirdPromise((resolve, reject) => {
     getUserData().then(userData => {
-      const data = find(userData, ({ id }) => id === id);
+      const data = find(userData, user => user.id === id);
       console.log("by id", data);
       resolve(data);
     });
