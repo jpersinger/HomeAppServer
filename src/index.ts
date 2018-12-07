@@ -1,6 +1,7 @@
 import BlueBirdPromise from "bluebird";
 import bodyParser from "body-parser";
 import express from "express";
+import { isEmpty } from "lodash";
 import {
   GENERAL_BUDGET_BRYAN_CREDIT_URL,
   GENERAL_BUDGET_JULIE_CREDIT_URL,
@@ -156,14 +157,15 @@ app.get(SETTINGS_HASH, (req, res) => {
     return;
   }
 
-  const prom = !!id ? getUserDataById(id) : getUserDataByEmail(email);
-  prom
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.send({ err });
+  getUserDataById(id).then(dataFromId => {
+    if (!isEmpty(dataFromId)) {
+      res.send(dataFromId);
+    }
+
+    getUserDataByEmail(email).then(dataFromEmail => {
+      res.send(dataFromEmail);
     });
+  });
 });
 
 app.listen(port);
