@@ -1,8 +1,8 @@
 import BlueBirdPromise from "bluebird";
 import bodyParser from "body-parser";
 import express from "express";
-import { isEmpty } from "lodash";
 import {
+  DISPLAY_NAME_URL,
   GENERAL_BUDGET_BRYAN_CREDIT_URL,
   GENERAL_BUDGET_JULIE_CREDIT_URL,
   GENERAL_BUDGET_POST_URL,
@@ -31,8 +31,8 @@ import {
 import { addMessage, getMessages } from "./services/database/home";
 import {
   addNewUser,
-  getUserDataByEmail,
-  getUserDataById
+  getUser,
+  updateDisplayName
 } from "./services/database/settings";
 const { getRecipes, addRecipe } = require("./services/database/recipes");
 const app = express();
@@ -149,23 +149,17 @@ app.post(SETTINGS_HASH, (req, res) => {
   addNewUser(req.body);
 });
 
+app.post(DISPLAY_NAME_URL, (req, res) => {
+  const { id, displayName } = JSON.parse(req.query.user);
+  updateDisplayName(id, displayName);
+});
+
 app.get(SETTINGS_HASH, (req, res) => {
-  const { id, email } = JSON.parse(req.query.user);
-  console.log("req", id, email);
-  if (!id && !email) {
-    res.send({});
-    return;
-  }
-
-  getUserDataById(id).then(dataFromId => {
-    if (!isEmpty(dataFromId)) {
-      res.send(dataFromId);
-    }
-
-    getUserDataByEmail(email).then(dataFromEmail => {
-      res.send(dataFromEmail);
-    });
-  });
+  getUser(JSON.parse(req.query.user))
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => res.send({ err }));
 });
 
 app.listen(port);
