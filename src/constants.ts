@@ -7,7 +7,6 @@ export const MONTHLY_EXPENSES_HASH = "/monthlyexpenses";
 export const PIGGY_BANKS_HASH = "/piggybanks";
 export const INCOME_HASH = "/incomes";
 export const SETTINGS_HASH = "/settings";
-export const DISPLAY_NAME_HASH = "/displayname";
 
 export const MESSAGES_URL = HOME_HASH + MESSAGES_HASH;
 
@@ -20,4 +19,8 @@ export const GENERAL_BUDGET_POST_URL = GENERAL_BUDGET_URL + "/bank";
 export const GENERAL_BUDGET_JULIE_CREDIT_URL = GENERAL_BUDGET_URL + "/julie";
 export const GENERAL_BUDGET_BRYAN_CREDIT_URL = GENERAL_BUDGET_URL + "/bryan";
 
-export const DISPLAY_NAME_URL = SETTINGS_HASH + DISPLAY_NAME_HASH;
+export const DISPLAY_NAME_URL = SETTINGS_HASH + "/displayname";
+export const TEXT_COLOR_URL = SETTINGS_HASH + "/textcolor";
+export const LINKED_EMAILS_URL = SETTINGS_HASH + "/linkedemails";
+export const PUSH_NOTIFICATIONS_URL =
+  SETTINGS_HASH + "/pushnotificationsenabled";

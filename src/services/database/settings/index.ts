@@ -9,12 +9,34 @@ export const addNewUser = (user: UserData) => {
 };
 
 export const updateDisplayName = (id: string, displayName: string) => {
+  updateUserField(id, { displayName });
+};
+
+export const updateTextColor = (id: string, textColor: string) => {
+  updateUserField(id, { textColor });
+};
+
+export const updateLinkedEmails = (id: string, linkedEmails: string[]) => {
+  updateUserField(id, { linkedEmails });
+};
+
+export const updatePushNotificationsEnabled = (
+  id: string,
+  pushNotificationsEnabled: boolean
+) => {
+  updateUserField(id, { pushNotificationsEnabled });
+};
+
+const updateUserField = (id: string, field: any) => {
   getUser({ id }).then(user => {
     if (isEmpty(user)) {
       return;
     }
-    user.displayName = displayName;
-    DatabaseHandler.setHashValue(USER_DATA, id, JSON.stringify(user));
+    DatabaseHandler.setHashValue(
+      USER_DATA,
+      id,
+      JSON.stringify({ ...user, ...field })
+    );
   });
 };
 

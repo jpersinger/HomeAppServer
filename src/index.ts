@@ -8,11 +8,14 @@ import {
   GENERAL_BUDGET_POST_URL,
   GENERAL_BUDGET_URL,
   INCOME_URL,
+  LINKED_EMAILS_URL,
   MESSAGES_URL,
   MONTHLY_EXPENSES_URL,
   PIGGY_BANKS_URL,
+  PUSH_NOTIFICATIONS_URL,
   RECIPE_HASH,
-  SETTINGS_HASH
+  SETTINGS_HASH,
+  TEXT_COLOR_URL
 } from "./constants";
 import {
   addIncome,
@@ -32,7 +35,10 @@ import { addMessage, getMessages } from "./services/database/home";
 import {
   addNewUser,
   getUser,
-  updateDisplayName
+  updateDisplayName,
+  updateLinkedEmails,
+  updatePushNotificationsEnabled,
+  updateTextColor
 } from "./services/database/settings";
 const { getRecipes, addRecipe } = require("./services/database/recipes");
 const app = express();
@@ -150,8 +156,23 @@ app.post(SETTINGS_HASH, (req, res) => {
 });
 
 app.post(DISPLAY_NAME_URL, (req, res) => {
-  const { id, displayName } = JSON.parse(req.query.user);
+  const { id, displayName } = req.body;
   updateDisplayName(id, displayName);
+});
+
+app.post(TEXT_COLOR_URL, (req, res) => {
+  const { id, textColor } = req.body;
+  updateTextColor(id, textColor);
+});
+
+app.post(LINKED_EMAILS_URL, (req, res) => {
+  const { id, linkedEmails } = req.body;
+  updateLinkedEmails(id, linkedEmails);
+});
+
+app.post(PUSH_NOTIFICATIONS_URL, (req, res) => {
+  const { id, pushNotificationsEnabled } = req.body;
+  updatePushNotificationsEnabled(id, pushNotificationsEnabled);
 });
 
 app.get(SETTINGS_HASH, (req, res) => {
