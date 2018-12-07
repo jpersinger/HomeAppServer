@@ -1,1 +1,1 @@
-export const USER_DATA = "user_data_1";
+export const USER_DATA = "user_data_2";
