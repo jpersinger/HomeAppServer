@@ -56,7 +56,7 @@ export const getUser = ({
       const data = find(userData, user => user.id === id);
       const emailData = find(
         userData,
-        ({ linkedEmails }) => linkedEmails.indexOf(email) !== -1
+        ({ linkedEmails }) => linkedEmails && linkedEmails.indexOf(email) !== -1
       );
       resolve(isEmpty(data) ? emailData : data);
     });
