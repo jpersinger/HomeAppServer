@@ -152,6 +152,7 @@ app.get("/test", (req, res) => {
 
 // SETTINGS
 app.post(SETTINGS_HASH, (req, res) => {
+  console.log("adding", req.body);
   addNewUser(req.body);
 });
 
