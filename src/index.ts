@@ -176,7 +176,6 @@ app.post(PUSH_NOTIFICATIONS_URL, (req, res) => {
 });
 
 app.get(SETTINGS_HASH, (req, res) => {
-  console.log(req.query);
   getUser(JSON.parse(req.query.user))
     .then(data => {
       res.send(data);
