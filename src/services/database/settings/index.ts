@@ -5,7 +5,8 @@ import { USER_DATA } from "./constants";
 import { UserData } from "./settings.defintions";
 
 export const addNewUser = (user: UserData) => {
-  DatabaseHandler.setHashValue(USER_DATA, user.id, JSON.stringify(user));
+  console.log("add", user);
+  // DatabaseHandler.setHashValue(USER_DATA, user.id, JSON.stringify(user));
 };
 
 export const updateDisplayName = (id: string, displayName: string) => {
