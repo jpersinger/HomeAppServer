@@ -58,6 +58,9 @@ export const getUser = ({
         userData,
         ({ linkedEmails }) => linkedEmails && linkedEmails.indexOf(email) !== -1
       );
+      console.log("full", userData);
+      console.log("from id", data);
+      console.log("from email", emailData);
       resolve(isEmpty(data) ? emailData : data);
     });
   });
